@@ -1,0 +1,171 @@
+<wsdl:definitions name="services" targetNamespace="http://www.movistar.com.ar/ws/ACN/Adn08x0Service/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.movistar.com.ar/ws/schema/ACN/" xmlns:tnsg="http://www.movistar.com.ar/ws/ACN/Adn08x0Service/" xmlns:ns0="http://www.movistar.com.ar/ws/schema/ACN/types/v0100" xmlns:ns1="http://www.movistar.com.ar/ws/schema/ACN/error/v0100">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://www.movistar.com.ar/ws/schema/ACN/">
+			<xsd:import schemaLocation="NumerosXmlSchema.xsd" namespace="http://www.movistar.com.ar/ws/schema/ACN/types/v0100"/>
+			<xsd:import schemaLocation="GeneralFault.xsd" namespace="http://www.movistar.com.ar/ws/schema/ACN/error/v0100"/>
+		</xsd:schema>
+	</wsdl:types>
+
+	<!--PARTS-->
+	<!--obtenerNumeros08x0-->
+	<wsdl:message name="obtenerNumeros08x0Request">
+		<wsdl:part element="ns0:obtenerNumeros08x0Request" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="obtenerNumeros08x0Response">
+		<wsdl:part element="ns0:obtenerNumeros08x0Response" name="parameters"/>
+	</wsdl:message>
+
+	<!--lockearNumero08x0-->
+	<wsdl:message name="lockearNumero08x0Request">
+		<wsdl:part element="ns0:lockearNumero08x0Request" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="lockearNumero08x0Response">
+		<wsdl:part element="ns0:lockearNumero08x0Response" name="parameters"/>
+	</wsdl:message>
+	
+	<!--revertirLockeoNumero08x0-->
+	<wsdl:message name="revertirLockeoNumero08x0Request">
+		<wsdl:part element="ns0:revertirLockeoNumero08x0Request" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="revertirLockeoNumero08x0Response">
+		<wsdl:part element="ns0:revertirLockeoNumero08x0Response" name="parameters"/>
+	</wsdl:message>
+	
+	<!--ocuparNumero08x0-->
+	<wsdl:message name="ocuparNumero08x0Request">
+		<wsdl:part element="ns0:ocuparNumero08x0Request" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="ocuparNumero08x0Response">
+		<wsdl:part element="ns0:ocuparNumero08x0Response" name="parameters"/>
+	</wsdl:message>
+	
+	<!--bajaNumero08x0-->
+	<wsdl:message name="bajaNumero08x0Request">
+		<wsdl:part element="ns0:bajaNumero08x0Request" name="parameters"/>
+	</wsdl:message>
+	<wsdl:message name="bajaNumero08x0Response">
+		<wsdl:part element="ns0:bajaNumero08x0Response" name="parameters"/>
+	</wsdl:message>
+	
+	<!--faults-->
+	<wsdl:message name="invocacionOperacionError">
+		<wsdl:part name="invocacionOperacionError" element="ns1:GeneralError"/>
+	</wsdl:message>
+
+	<wsdl:portType name="Adn08x0Service">
+		<!--OBTENER NUMEROS 08x0-->
+		<wsdl:operation name="obtenerNumeros08x0">
+			<wsdl:input message="tnsg:obtenerNumeros08x0Request"/>
+			<wsdl:output message="tnsg:obtenerNumeros08x0Response"/>
+			<wsdl:fault name="invocacionOperacionError" message="tnsg:invocacionOperacionError"/>
+		</wsdl:operation>
+		
+		<!--LOCKEAR NUMERO 08x0-->
+		<wsdl:operation name="lockearNumero08x0">
+			<wsdl:input message="tnsg:lockearNumero08x0Request"/>
+			<wsdl:output message="tnsg:lockearNumero08x0Response"/>
+			<wsdl:fault name="invocacionOperacionError" message="tnsg:invocacionOperacionError"/>
+		</wsdl:operation>
+		
+		<!--REVERTIR LOCKEO NUMERO 08x0-->
+		<wsdl:operation name="revertirLockeoNumero08x0">
+			<wsdl:input message="tnsg:revertirLockeoNumero08x0Request"/>
+			<wsdl:output message="tnsg:revertirLockeoNumero08x0Response"/>
+			<wsdl:fault name="invocacionOperacionError" message="tnsg:invocacionOperacionError"/>
+		</wsdl:operation>
+		
+		<!--OCUPAR NUMERO 08x0-->
+		<wsdl:operation name="ocuparNumero08x0">
+			<wsdl:input message="tnsg:ocuparNumero08x0Request"/>
+			<wsdl:output message="tnsg:ocuparNumero08x0Response"/>
+			<wsdl:fault name="invocacionOperacionError" message="tnsg:invocacionOperacionError"/>
+		</wsdl:operation>
+		
+		<!--BAJA NUMERO 08x0-->
+		<wsdl:operation name="bajaNumero08x0">
+			<wsdl:input message="tnsg:bajaNumero08x0Request"/>
+			<wsdl:output message="tnsg:bajaNumero08x0Response"/>
+			<wsdl:fault name="invocacionOperacionError" message="tnsg:invocacionOperacionError"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="servicesSOAP" type="tnsg:Adn08x0Service">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<!--OBTENER NUMEROS 08x0-->
+		<wsdl:operation name="obtenerNumeros08x0">
+			<soap:operation soapAction="http://www.tmmas.com.ar/Adn08x0Service/obtenerNumeros08x0"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="invocacionOperacionError">
+				<soap:fault name="invocacionOperacionError"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<!--LOCKEAR NUMERO 08x0-->
+		<wsdl:operation name="lockearNumero08x0">
+			<soap:operation soapAction="http://www.tmmas.com.ar/Adn08x0Service/lockearNumero08x0"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="invocacionOperacionError">
+				<soap:fault name="invocacionOperacionError"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<!--REVERTIR LOCKEO NUMERO 08x0-->
+		<wsdl:operation name="revertirLockeoNumero08x0">
+			<soap:operation soapAction="http://www.tmmas.com.ar/Adn08x0Service/revertirLockeoNumero08x0"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="invocacionOperacionError">
+				<soap:fault name="invocacionOperacionError"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<!--OCUPAR NUMERO 08x0-->
+		<wsdl:operation name="ocuparNumero08x0">
+			<soap:operation soapAction="http://www.tmmas.com.ar/Adn08x0Service/ocuparNumero08x0"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="invocacionOperacionError">
+				<soap:fault name="invocacionOperacionError"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<!--BAJA NUMERO 08x0-->
+		<wsdl:operation name="bajaNumero08x0">
+			<soap:operation soapAction="http://www.tmmas.com.ar/Adn08x0Service/bajaNumero08x0"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="invocacionOperacionError">
+				<soap:fault name="invocacionOperacionError"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="Adn08x0Service">
+		<wsdl:port binding="tnsg:servicesSOAP" name="Adn08x0ServiceSOAP">
+			<soap:address location="http://www.tmmas.com.ar/Adn08x0Service/"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

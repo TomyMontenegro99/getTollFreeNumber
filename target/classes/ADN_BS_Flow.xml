@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:batch="http://www.mulesoft.org/schema/mule/ee/batch" xmlns:bti="http://www.mulesoft.org/schema/mule/ee/bti" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:http-policy="http://www.mulesoft.org/schema/mule/mule-http" xmlns:kryo="http://www.mulesoft.org/schema/mule/kryo" xmlns:module="http://www.mulesoft.org/schema/mule/module" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="api-httpListenerConfig-ADN">
+        <http:listener-connection host="localhost" port="8082" readTimeout="30000000000"/>
+    </http:listener-config>
+    <apikit-soap:config name="soapkit-config-ADN" port="Adn08x0ServiceSOAP" service="Adn08x0Service" wsdlLocation="Adn08x0Service.wsdl"/>
+    <http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="2c211694-10d0-4c59-9284-2508f10ef039" >
+		<http:request-connection host="localhost" port="7101" responseBufferSize="10000"/>
+	</http:request-config>
+	<flow name="api-mainBS">
+        <http:listener config-ref="api-httpListenerConfig-ADN" path="/Adn08x0Service/Adn08x0ServiceSOAP">
+            <http:response statusCode="#[attributes.additionalTransportData.statusCode default 200]">
+                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[attributes.additionalTransportData.statusCode default 500]">
+                <http:body><![CDATA[#[output application/json --- error.errorType]]]></http:body>
+                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+		<logger level="INFO" doc:name="LOG payload" doc:id="41cca21e-99b0-4d3c-8b43-db4a3683456b" message="#[payload]" />
+		<apikit-soap:router config-ref="soapkit-config-ADN">
+            <apikit-soap:attributes><![CDATA[#[%dw 2.0
+              output application/java
+              ---
+              {
+                  headers: attributes.headers,
+                  method: attributes.method,
+                  queryString: attributes.queryString
+            }]]]></apikit-soap:attributes>
+        </apikit-soap:router>
+    </flow>
+	<flow name="obtenerNumeros08x0:\soapkit-config-ADN">
+		<ee:transform doc:name="Format obtenerNumeros08x0Request" doc:id="695dc83c-8ce7-4541-8afc-02f0d5aac3e5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns soapenv http://schemas.xmlsoap.org/soap/envelope/ 
+ns ns2 http://www.movistar.com.ar/ws/schema/ACN/types/v0100
+ns ns01 http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService
+---
+{
+	soapenv#Envelope: {
+	soapenv#Header: {},
+    soapenv#Body: { 
+	ns2#obtenerNumeros08x0Request: {
+		ns2#prefijo: payload.body.ns2#obtenerNumeros08x0Request.ns2#prefijo default "",
+		ns2#tipoProducto: payload.body.ns2#obtenerNumeros08x0Request.ns2#tipoProducto default "",
+		ns2#centroFrontal: payload.body.ns2#obtenerNumeros08x0Request.ns2#centroFrontal,
+		ns2#subfijo: payload.body.ns2#obtenerNumeros08x0Request.ns2#subfijo,
+		ns2#numero: payload.body.ns2#obtenerNumeros08x0Request.ns2#numero,
+		ns2#cantidad: payload.body.ns2#obtenerNumeros08x0Request.ns2#cantidad default 0,
+		ns2#cliente: payload.body.ns2#obtenerNumeros08x0Request.ns2#cliente,
+		ns2#internacional: payload.body.ns2#obtenerNumeros08x0Request.ns2#internacional default true,
+		ns2#operacion: payload.body.ns2#obtenerNumeros08x0Request.ns2#operacion,
+		ns2#modulo: payload.body.ns2#obtenerNumeros08x0Request.ns2#modulo default "",
+		ns2#usuario: payload.body.ns2#obtenerNumeros08x0Request.ns2#usuario default ""
+	}
+
+}
+}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request_to_Backend" doc:id="ac62cdf3-f16c-44dc-bbff-f72ffb5bafd6" config-ref="HTTP_Request_configuration1" path="/Mock/getTollFreeNumberMock/Proxy/ADN_PX" outputMimeType="application/xml" outputEncoding="UTF-8">
+			<ee:repeatable-file-store-stream bufferUnit="MB" />
+			<reconnect-forever />
+		</http:request>
+		<logger level="INFO" doc:name="LOG payload" doc:id="6edab772-a2c4-485d-a29a-63bf0a5b5c90" message="payload"/>
+		<set-payload value='#[message.payload.^raw as String]' doc:name="Cast_to_String" doc:id="d98bb486-1c77-42dd-9ae1-332dabb846c6" />
+		<ee:transform doc:name="Cast_to_XML" doc:id="6e29530b-349e-45b1-8348-ada4c718f88c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+
+---
+read(payload,"application/xml")	
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="LOG payload" doc:id="762f548b-7cac-436b-b6da-65badde237e0" message="#[payload]"/>
+		<choice doc:name="Choice" doc:id="b7b09964-f1f4-43e8-ad6e-5403704696a6" >
+			<when expression='#[%dw 2.0&#10;output application/xml&#10;ns ns0 http://www.movistar.com.ar/ws/schema/ACN/types/v0100&#10;---&#10;((keysOf(payload.Envelope.Body)) map ($ as String)) contains  "Fault"]' doc:id="daee774f-871b-471b-9dac-fd7deac3f207">
+				<ee:transform doc:name="Format_Fault" doc:id="1e43b037-51cd-496b-aeca-9afa54eb5f0f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns soapenv http://schemas.xmlsoap.org/soap/envelope/
+ns v01 http://www.movistar.com.ar/ws/schema/ACN/error/v0100
+---
+{
+	soapenv#Fault: {
+		faultcode: payload.Envelope.Body.Fault.faultcode ,
+		faultstring : "USUARIO NO ENCONTRADO",
+		faultactor: payload.Envelope.Body.Fault.faultactor,
+		
+		detail: {
+			v01#GeneralError: {
+				v01#mensaje: payload.Envelope.Body.Fault.detail.v01#GeneralError.v01#mensaje,
+				v01#descripcion: payload.Envelope.Body.Fault.detail.v01#GeneralError.v01#descripcion
+			}
+		}
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Format_obtenerNumeros08x0Response" doc:id="44e56c9e-c42c-4124-a900-75a6fbab737f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.movistar.com.ar/ws/schema/ACN/types/v0100
+---
+{
+    ns0#obtenerNumeros08x0Response: {
+        (payload.Envelope.Body.ns0#obtenerNumeros08x0Response.*ns0#numero map ( numero , indexOfNumero ) -> {
+            ns0#numero: {
+                ns0#numero_08X0: numero.ns0#numero_08X0,
+                ns0#estadoNumero: numero.ns0#estadoNumero
+            }
+        })
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="LOG payload" doc:id="8cad8960-eaaf-4ece-8cc1-7dd21556186c" message="payload" />
+    </flow>
+    <flow name="lockearNumero08x0:\soapkit-config-ADN">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [lockearNumero08x0:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="revertirLockeoNumero08x0:\soapkit-config-ADN">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [revertirLockeoNumero08x0:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="ocuparNumero08x0:\soapkit-config-ADN">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [ocuparNumero08x0:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="bajaNumero08x0:\soapkit-config-ADN">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [bajaNumero08x0:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

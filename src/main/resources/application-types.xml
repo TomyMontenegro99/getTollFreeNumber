@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="obtenerNumero08x0Request_estructura" format="xml">
+      <types:shape format="xml-schema" element="{http://www.movistar.com.ar/ws/schema/ACN/types/v0100}obtenerNumeros08x0Request" location="schemas/NumerosXmlSchema.xsd"/>
+    </types:type>
+    <types:type name="getTollFreeNumberRequest_estructura" format="xml">
+      <types:shape format="xml-schema" element="{http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService}getTollFreeNumberRequest" location="api/NumberingManagementService.xsd"/>
+    </types:type>
+    <types:type name="obtenerNumero08x0Response_estructura" format="xml">
+      <types:shape format="xml-schema" element="{http://www.movistar.com.ar/ws/schema/ACN/types/v0100}obtenerNumeros08x0Response" location="api/NumerosXmlSchema.xsd"/>
+    </types:type>
+    <types:type name="getTollFreeNumberResponse_estructura" format="xml">
+      <types:shape format="xml-schema" element="{http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService}getTollFreeNumberResponse" location="api/NumberingManagementService.xsd"/>
+    </types:type>
+    <types:type name="paylaodString" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+    <types:type name="Fault" format="xml">
+      <types:shape format="xml-schema" element="{http://www.movistar.com.ar/ws/schema/ACN/error/v0100}GeneralError" location="api/GeneralFault.xsd"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#c49c7ba5-7da8-4555-bed2-2325d1cd16d7">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="obtenerNumero08x0Request_estructura"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#c417c3a8-e825-40cd-a04a-50f347379ebb">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="getTollFreeNumberRequest_estructura"/>
+          <types:attributes type="getTollFreeNumberRequest_estructura"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="obtenerNumero08x0Request_estructura"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#695dc83c-8ce7-4541-8afc-02f0d5aac3e5">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="obtenerNumero08x0Request_estructura"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ac62cdf3-f16c-44dc-bbff-f72ffb5bafd6">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="body" type="obtenerNumero08x0Response_estructura"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#6e29530b-349e-45b1-8348-ada4c718f88c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="paylaodString"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ed83f6a7-1aff-4eff-9945-3a9e0c13c0f4">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="obtenerNumero08x0Response_estructura"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getTollFreeNumberResponse_estructura"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#44e56c9e-c42c-4124-a900-75a6fbab737f">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="obtenerNumero08x0Response_estructura"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="obtenerNumero08x0Response_estructura"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#1e43b037-51cd-496b-aeca-9afa54eb5f0f">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="Fault"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="Fault"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#7114ba2f-f48b-4d20-ab8a-e577bae768e6">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="Fault"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

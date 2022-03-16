@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns0:getTollFreeNumberRequest xmlns:ns0="http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService">
+  <ns0:productType>M</ns0:productType>
+  <ns0:fullTelephoneNumber>nisi</ns0:fullTelephoneNumber>
+  <ns0:splitTelephoneNumber>
+    <ns0:numPrefix>0810</ns0:numPrefix>
+    <ns0:numCentral>666</ns0:numCentral>
+    <ns0:numSuffix>est</ns0:numSuffix>
+  </ns0:splitTelephoneNumber>
+  <ns0:customerID>a363076e96ad4964af7</ns0:customerID>
+  <ns0:international>N</ns0:international>
+  <ns0:Quantity>65</ns0:Quantity>
+  <ns0:transactionInfo>
+    <ns0:date>2014-01-09</ns0:date>
+    <ns0:transactionId>8606053f2c6043c2921</ns0:transactionId>
+    <ns0:user>Excepteur</ns0:user>
+  </ns0:transactionInfo>
+</ns0:getTollFreeNumberRequest>

@@ -1,0 +1,16 @@
+<xsd:schema targetNamespace="http://www.movistar.com.ar/ws/schema/ACN/error/v0100" 
+            xmlns:tns="http://www.movistar.com.ar/ws/schema/ACN/error/v0100" 
+            elementFormDefault="qualified" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            xmlns:con="http://eviware.com/soapui/config">
+	
+    <xsd:element name="GeneralError">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="mensaje" type="xsd:string"/>
+                <xsd:element name="descripcion" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+	
+</xsd:schema>

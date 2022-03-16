@@ -1,0 +1,144 @@
+<xsd:schema targetNamespace="http://www.movistar.com.ar/ws/schema/ACN/types/v0100" 
+            xmlns:tns="http://www.movistar.com.ar/ws/schema/ACN/types/v0100" 
+            elementFormDefault="qualified" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            xmlns:con="http://eviware.com/soapui/config">
+
+    <xsd:element name="obtenerNumeros08x0Request" type="tns:obtenerNumeros08x0RequestType" />
+    <xsd:element name="obtenerNumeros08x0Response" type="tns:obtenerNumeros08x0ResponseType" />
+	
+    <xsd:element name="lockearNumero08x0Request">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="numero" type="tns:numeroType" maxOccurs="1" minOccurs="1"/>
+                <xsd:element name="cliente" type="tns:clienteType" maxOccurs="1" minOccurs="1"/>
+                <xsd:element name="operacion" type="tns:operacionType" maxOccurs="1" minOccurs="1"/>
+                <xsd:element name="modulo" type="tns:moduloType" maxOccurs="1" minOccurs="1"/>
+                <xsd:element name="usuario" type="tns:usuarioType" maxOccurs="1" minOccurs="1"/>
+            </xsd:all>            
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="lockearNumero08x0Response" type="tns:resultadoType" />
+	
+    <xsd:element name="revertirLockeoNumero08x0Request" type="tns:cambioEstadoType" />
+    <xsd:element name="revertirLockeoNumero08x0Response" type="tns:resultadoType" />
+	
+    <xsd:element name="ocuparNumero08x0Request" type="tns:cambioEstadoType" />
+    <xsd:element name="ocuparNumero08x0Response" type="tns:resultadoType" />
+	
+    <xsd:element name="bajaNumero08x0Request" type="tns:cambioEstadoType" />
+    <xsd:element name="bajaNumero08x0Response" type="tns:resultadoType" />
+	
+    <xsd:complexType name="cambioEstadoType">
+        <xsd:all>
+            <xsd:element name="numero" type="tns:numeroType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="operacion" type="tns:operacionType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="modulo" type="tns:moduloType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="usuario" type="tns:usuarioType" maxOccurs="1" minOccurs="1"/>
+        </xsd:all>
+    </xsd:complexType>
+		
+    <xsd:simpleType name="resultadoType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OK"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+	
+    <xsd:complexType name="obtenerNumeros08x0RequestType">
+        <xsd:all>
+            <xsd:element name="prefijo" type="tns:prefijoType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="tipoProducto" type="tns:tipoProductoType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="centroFrontal" type="tns:centroFrontalType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="subfijo" type="tns:subfijoType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="numero" type="tns:numeroType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="cantidad" type="tns:cantidadType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="cliente" type="tns:clienteType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="internacional" type="tns:internacionalType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="operacion" type="tns:operacionType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="modulo" type="tns:moduloType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="usuario" type="tns:usuarioType" maxOccurs="1" minOccurs="1"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="obtenerNumeros08x0ResponseType">
+        <xsd:sequence>
+            <xsd:element name="numero" type="tns:numeroObtenidoType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="numeroObtenidoType">
+        <xsd:sequence>
+            <xsd:element name="numero_08X0" type="xsd:string"/>
+            <xsd:element name="estadoNumero" type="tns:estadoNumeroType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="estadoNumeroType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="D"/>
+            <xsd:enumeration value="R"/>
+            <xsd:enumeration value="K"/>
+            <xsd:enumeration value="O"/>
+            <xsd:enumeration value="B"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="prefijoType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="0800"/>
+            <xsd:enumeration value="0810"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="tipoProductoType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="FIJO"/>
+            <xsd:enumeration value="MOVIL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="centroFrontalType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="222"/>
+            <xsd:enumeration value="333"/>
+            <xsd:enumeration value="666"/>
+            <xsd:enumeration value="999"/>
+            <xsd:enumeration value="321"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="subfijoType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9][0-9][0-9][0-9]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="numeroType">
+        <xsd:restriction base="xsd:string"/> 
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="cantidadType">
+        <xsd:restriction base="xsd:integer"/> 
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="clienteType">
+        <xsd:restriction base="xsd:string"/> 
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="internacionalType">
+        <xsd:restriction base="xsd:boolean"/>
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="operacionType">
+        <xsd:restriction base="xsd:string"/> 
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="moduloType">
+        <xsd:restriction base="xsd:string"/> 
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="usuarioType">
+        <xsd:restriction base="xsd:string"/> 
+    </xsd:simpleType>
+	
+</xsd:schema>

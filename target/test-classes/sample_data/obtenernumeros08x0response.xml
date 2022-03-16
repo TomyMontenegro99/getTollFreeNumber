@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns0:obtenerNumeros08x0Response xmlns:ns0="http://www.movistar.com.ar/ws/schema/ACN/types/v0100">
+  <ns0:numero>
+    <ns0:numero_08X0>corporis</ns0:numero_08X0>
+    <ns0:estadoNumero>D</ns0:estadoNumero>
+  </ns0:numero>
+  <ns0:numero>
+    <ns0:numero_08X0>dolor</ns0:numero_08X0>
+    <ns0:estadoNumero>B</ns0:estadoNumero>
+  </ns0:numero>
+</ns0:obtenerNumeros08x0Response>

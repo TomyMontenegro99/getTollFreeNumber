@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <ns1:obtenerNumeros08x0Response xmlns:ns1="http://www.movistar.com.ar/ws/schema/ACN/types/v0100">
+      <ns1:numero>
+        <ns1:numero_08X0>08003216985</ns1:numero_08X0>
+        <ns1:estadoNumero>D</ns1:estadoNumero>
+      </ns1:numero>
+      <ns1:numero>
+        <ns1:numero_08X0>08003216986</ns1:numero_08X0>
+        <ns1:estadoNumero>D</ns1:estadoNumero>
+      </ns1:numero>
+      <ns1:numero>
+        <ns1:numero_08X0>08003216987</ns1:numero_08X0>
+        <ns1:estadoNumero>D</ns1:estadoNumero>
+      </ns1:numero>
+      <ns1:numero>
+        <ns1:numero_08X0>08003216988</ns1:numero_08X0>
+        <ns1:estadoNumero>D</ns1:estadoNumero>
+      </ns1:numero>
+      <ns1:numero>
+        <ns1:numero_08X0>08003216989</ns1:numero_08X0>
+        <ns1:estadoNumero>D</ns1:estadoNumero>
+      </ns1:numero>
+    </ns1:obtenerNumeros08x0Response>
+  </soapenv:Body>
+</soapenv:Envelope>

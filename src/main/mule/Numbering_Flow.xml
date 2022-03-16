@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:batch="http://www.mulesoft.org/schema/mule/ee/batch" xmlns:bti="http://www.mulesoft.org/schema/mule/ee/bti" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:http-policy="http://www.mulesoft.org/schema/mule/mule-http" xmlns:kryo="http://www.mulesoft.org/schema/mule/kryo" xmlns:module="http://www.mulesoft.org/schema/mule/module" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081"/>
+    </http:listener-config>
+    <apikit-soap:config name="soapkit-config" wsdlLocation="api\NumberingManagementService.wsdl" service="NumberingManagementService" port="NumberingManagementServicePort"/>
+    
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="0b47de46-6140-4780-8989-f6f405577d9b" >
+		<http:request-connection host="localhost" port="8082" connectionIdleTimeout="300000000" responseBufferSize="10000"/>
+	</http:request-config>
+	<flow name="api-main">
+        <http:listener config-ref="api-httpListenerConfig" path="/NumberingManagementService/NumberingManagementServicePort">
+            <http:response statusCode="#[attributes.additionalTransportData.statusCode default 200]">
+                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[attributes.additionalTransportData.statusCode default 500]">
+                <http:body><![CDATA[#[output application/json --- error.errorType]]]></http:body>
+                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <logger level="INFO" doc:name="LOG payload" doc:id="5ea1fceb-b326-48f6-9a78-9ddff789f0af" message="#[payload]"/>
+		<apikit-soap:router config-ref="soapkit-config">
+            <apikit-soap:attributes><![CDATA[#[%dw 2.0
+              output application/java
+              ---
+              {
+                  headers: attributes.headers,
+                  method: attributes.method,
+                  queryString: attributes.queryString
+            }]]]></apikit-soap:attributes>
+        </apikit-soap:router>
+    </flow>
+    <flow name="GetTollFreeNumber:\soapkit-config">
+        <ee:transform doc:id="c417c3a8-e825-40cd-a04a-50f347379ebb" doc:name="getTollFreeNumberRequest_to_obtenerNumeros08x0Request">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns soapenv http://schemas.xmlsoap.org/soap/envelope/ 
+ns ns2 http://www.movistar.com.ar/ws/schema/ACN/types/v0100
+ns ns01 http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService
+---
+
+{
+	soapenv#Envelope: {
+	soapenv#Header: {},
+    soapenv#Body: { 
+	ns2#obtenerNumeros08x0Request: {
+		ns2#prefijo: payload.Body.ns01#getTollFreeNumberRequest.ns01#transactionInfo.ns01#transactionId
+	}
+}
+}
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" doc:name="LOG payload" doc:id="8f59ebf9-d3be-4d14-912d-003eac7e8f19" message="#[%dw 2.0&#10;ns ns0 http://www.movistar.com.ar/ws/schema/ACN/types/v0100&#10;---&#10;payload.ns0#obtenerNumeros08x0Request]"/>
+		<http:request method="POST" doc:name="to_ADN_BS" doc:id="7b857f47-f31b-4be4-9c51-f40344d75fd1" config-ref="HTTP_Request_configuration" path="/Adn08x0Service/Adn08x0ServiceSOAP" outputMimeType="application/xml" responseTimeout="300000" outputEncoding="UTF-8"/>
+		<logger level="INFO" doc:name="LOG payload" doc:id="f564b11b-df0f-443d-8e0d-913f18ad1ca3" message="#[payload]"/>
+		<choice doc:name="Choice" doc:id="ce00c467-0844-4e19-ba56-114300113c76" >
+			<when expression='#[%dw 2.0&#10;output application/xml&#10;ns ns0 http://www.movistar.com.ar/ws/schema/ACN/types/v0100&#10;---&#10;((keysOf(payload.Envelope.Body)) map ($ as String)) contains  "Fault"]'>
+				<ee:transform doc:name="Format_Fault" doc:id="7114ba2f-f48b-4d20-ab8a-e577bae768e6" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns soapenv http://schemas.xmlsoap.org/soap/envelope/
+ns v01 http://www.movistar.com.ar/ws/schema/ACN/error/v0100
+---
+{
+	soapenv#Fault: {
+		faultcode: payload.Envelope.Body.Fault.faultcode ,
+		faultstring : "USUARIO NO ENCONTRADO",
+		faultactor: payload.Envelope.Body.Fault.faultactor,
+		
+		detail: {
+			v01#GeneralError: {
+				v01#mensaje: payload.Envelope.Body.Fault.detail.v01#GeneralError.v01#mensaje,
+				v01#descripcion: payload.Envelope.Body.Fault.detail.v01#GeneralError.v01#descripcion
+			}
+		}
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="obtenerNumeros08x0Response_to_getTollFreeNumberResponse" doc:id="ed83f6a7-1aff-4eff-9945-3a9e0c13c0f4">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService
+ns ns01 http://www.movistar.com.ar/ws/schema/ACN/types/v0100
+---
+{
+	ns0#getTollFreeNumberResponse: {
+		(payload.Envelope.Body.ns01#obtenerNumeros08x0Response.*ns01#numero map ( numero , indexOfNumero ) -> {
+			ns0#availableNumber: {
+				ns0#fullNumber: numero.ns01#numero_08X0 default "",
+				ns0#status: numero.ns01#estadoNumero default ""
+			}
+		})
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="LOG payload" doc:id="4c310c86-4449-4e4d-a986-6f49d4379bd5" message="#[payload]" />
+    </flow>
+	<flow name="LockTollFreeNumber:\soapkit-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [LockTollFreeNumber:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="UnlockTollFreeNumber:\soapkit-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [UnlockTollFreeNumber:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="ActivateTollFreeNumber:\soapkit-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [ActivateTollFreeNumber:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="CeaseTollFreeNumber:\soapkit-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "soap:Server",
+            faultstring: "Operation [CeaseTollFreeNumber:\soapkit-config] not implemented"
+        }
+    } write "application/xml"
+}]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

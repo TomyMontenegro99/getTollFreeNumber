@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService"
+	targetNamespace="http://www.movistar.com.ar/ws/schema/amdocs/NumberingManagementService"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<!-- begin GetTollFreeNumber Request -->
+	<xsd:element name="getTollFreeNumberRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="productType">
+					<xsd:annotation>
+						<xsd:documentation>
+							An indicator whether this is a Fixed or a mobile Toll Free Number. Needs to be defined according to the selected EPC Toll Free Type
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="F"/>
+							<xsd:enumeration value="M"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:choice>
+					<xsd:element maxOccurs="1" minOccurs="1" name="fullTelephoneNumber">
+						<xsd:annotation>
+							<xsd:documentation>
+								The full telephone number requested
+								Is informed when customer wants a specific number.
+								Either this or splitTelephoneNumber will be sent
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="11"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element maxOccurs="1" minOccurs="1" name="splitTelephoneNumber">
+						<xsd:annotation>
+							<xsd:documentation>
+								The split telephone number requested.
+								Is informed when only a part of the number is selected by the customer.
+								Either this or fullTelephoneNumber will be sent
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element maxOccurs="1" minOccurs="1" name="numPrefix">
+									<xsd:annotation>
+										<xsd:documentation>
+											The Prefix of the requested Toll Free Number. Needs to be defined according to the selected EPC product
+										</xsd:documentation>
+									</xsd:annotation>
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:enumeration value="0800"/>
+											<xsd:enumeration value="0810"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element maxOccurs="1" minOccurs="0" name="numCentral">
+									<xsd:annotation>
+										<xsd:documentation>
+											The Center section of the requested Toll Free Number.
+											Mandatory for Mobile.
+										</xsd:documentation>
+									</xsd:annotation>
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:enumeration value="222"/>
+											<xsd:enumeration value="333"/>
+											<xsd:enumeration value="666"/>
+											<xsd:enumeration value="999"/>
+											<xsd:enumeration value="321"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element maxOccurs="1" minOccurs="0" name="numSuffix">
+									<xsd:annotation>
+										<xsd:documentation>
+											The Center section of the requested Toll Free Number.
+										</xsd:documentation>
+									</xsd:annotation>
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:minLength value="1"/>
+											<xsd:maxLength value="4"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+				<xsd:element maxOccurs="1" minOccurs="1" name="customerID">
+					<xsd:annotation>
+						<xsd:documentation>
+							Customer ID
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="10"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="1" name="international">
+					<xsd:annotation>
+						<xsd:documentation>
+							An indicator whether this is an international toll free number. Needs to be defined according to the selected EPC Toll Free Type
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="N">
+								<xsd:annotation>
+									<xsd:documentation>
+										National
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:enumeration>
+							<xsd:enumeration value="I">
+								<xsd:annotation>
+									<xsd:documentation>
+										International
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:enumeration>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="Quantity">
+					<xsd:annotation>
+						<xsd:documentation>
+							Indicates the quantity of telephone numbers to be retrieved
+							If Quantity (a.k.a. pageSize) is not informed, the default applied will be 5
+							If fullTelephoneNumber is supplied this field will be ignored
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:long"/>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="transactionInfo" >
+					<xsd:annotation>
+						<xsd:documentation>
+							Transaction information
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element maxOccurs="1" minOccurs="1" name="date" type="xsd:date"/>
+							<xsd:element maxOccurs="1" minOccurs="1" name="transactionId" type="xsd:string"/>
+							<xsd:element maxOccurs="1" minOccurs="1" name="user" type="xsd:string"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end GetTollFreeNumber Request -->
+	<!-- begin GetTollFreeNumber Response -->
+	<xsd:element name="getTollFreeNumberResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="unbounded" minOccurs="1" name="availableNumber" >
+					<xsd:annotation>
+						<xsd:documentation>
+							Transaction information
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element maxOccurs="1" minOccurs="1" name="fullNumber">
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:maxLength value="11"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element maxOccurs="1" minOccurs="1" name="status" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation>
+										If the full Number is available or not
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end GetTollFreeNumber Response -->
+	<!-- begin LockTollFreeNumber Request -->
+	<xsd:element name="lockTollFreeNumberRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="lockTollFreeInput" type="tns:HandleTollFreeType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end LockTollFreeNumber Request -->
+	<!-- begin LockTollFreeNumber Response -->
+	<xsd:element name="lockTollFreeNumberResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="result" type="tns:ExecutionResultType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end LockTollFreeNumber Response -->
+	
+	
+	<!-- begin UnlockTollFreeNumber Request -->
+	<xsd:element name="unlockTollFreeNumberRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="unlockTollFreeInput" type="tns:HandleTollFreeType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end UnlockTollFreeNumber Request -->
+	<!-- begin UnlockTollFreeNumber Response -->
+	<xsd:element name="unlockTollFreeNumberResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="result" type="tns:ExecutionResultType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end UnlockTollFreeNumber Response -->
+	
+	<!-- begin ActivateTollFreeNumber Request -->
+	<xsd:element name="activateTollFreeNumberRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="activateTollFreeInput" type="tns:HandleTollFreeType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end ActivateTollFreeNumber Request -->
+	<!-- begin ActivateTollFreeNumber Response -->
+	<xsd:element name="activateTollFreeNumberResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="result" type="tns:ExecutionResultType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end ActivateTollFreeNumber Response -->
+	
+	
+	<!-- begin CeaseTollFreeNumber Request -->
+	<xsd:element name="ceaseTollFreeNumberRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="ceaseTollFreeInput" type="tns:HandleTollFreeType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end CeaseTollFreeNumber Request -->
+	<!-- begin CeaseTollFreeNumber Response -->
+	<xsd:element name="ceaseTollFreeNumberResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" name="result" type="tns:ExecutionResultType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- end CeaseTollFreeNumber Response -->
+	
+	
+	
+	
+	
+	
+	<!-- Gereal types -->
+	
+	<xsd:complexType name="HandleTollFreeType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Complex Type Please see Appendix
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="Number" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						Full Toll Free Number
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="customerID" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						Customer ID
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="1" name="transactionInfo" >
+				<xsd:annotation>
+					<xsd:documentation>
+						Transaction information
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element maxOccurs="1" minOccurs="1" name="date" type="xsd:date"/>
+						<xsd:element maxOccurs="1" minOccurs="1" name="transactionId" type="xsd:string"/>
+						<xsd:element maxOccurs="1" minOccurs="1" name="user" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	<xsd:complexType name="ExecutionResultType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Transaction information
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="result"  type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						Message with the result of the execution in case processOk = “ERROR”
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="1" name="processOk">
+				<xsd:annotation>
+					<xsd:documentation>
+						OK - ERROR
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Ok" />
+						<xsd:enumeration value="ERROR" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+</xsd:schema>
